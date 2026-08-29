@@ -49,6 +49,17 @@ if values.get("proposed_action"):
     st.write(f"**Confidence:** {values.get('confidence_score', 0):.2f}")
     st.write(f"**Reasoning:** {values.get('reasoning')}")
 
+    if values.get("execution_status") and values.get("execution_status") != "pending_routing":
+        st.write(f"**Execution status:** `{values.get('execution_status')}`")
+    if values.get("human_decision"):
+        st.write(f"**Human decision:** `{values.get('human_decision')}`")
+    if values.get("reviewer_id"):
+        st.write(f"**Reviewer:** `{values.get('reviewer_id')}`")
+    if values.get("edited_action"):
+        st.write(f"**Edited action:** `{values.get('edited_action')}`")
+    if values.get("reviewed_at"):
+        st.write(f"**Reviewed at:** `{values.get('reviewed_at')}`")
+
     is_pending_review = bool(snapshot.next)
     if is_pending_review:
         edited_action = st.text_input(
@@ -75,4 +86,7 @@ if values.get("proposed_action"):
         if edit.button("Edit"):
             resume("edit", edited_action)
     else:
+        if values.get("audit_entry"):
+            st.write("**Audit entry:**")
+            st.json(values["audit_entry"])
         st.success(values.get("result_message", "Workflow completed."))

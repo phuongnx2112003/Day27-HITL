@@ -17,6 +17,8 @@ class GraphState(TypedDict, total=False):
     edited_action: str | None
     execution_status: str | None
     result_message: str | None
+    reviewed_at: str | None
+    audit_entry: dict | None
 
 
 class AuditEntry(BaseModel):

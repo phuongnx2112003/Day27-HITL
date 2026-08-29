@@ -220,10 +220,13 @@ def execute_low_risk_action(state: GraphState) -> dict[str, str]:
     """Execute an approved low-risk action automatically."""
 
     action = state["proposed_action"]
-    append_audit_entry(_new_audit_entry(state, action, "auto_execute"))
+    entry = _new_audit_entry(state, action, "auto_execute")
+    append_audit_entry(entry)
     return {
         "execution_status": "executed",
         "result_message": "Retention email sent automatically.",
+        "reviewed_at": entry.timestamp,
+        "audit_entry": _serialize_entry(entry),
     }
 
 
@@ -248,8 +251,20 @@ def execute_high_risk_action(state: GraphState) -> dict[str, str]:
     else:
         raise ValueError("human_decision must be approve, reject, or edit")
 
-    append_audit_entry(_new_audit_entry(state, action, decision))
-    return {"execution_status": status, "result_message": message}
+    entry = _new_audit_entry(state, action, decision)
+    append_audit_entry(entry)
+    return {
+        "execution_status": status,
+        "result_message": message,
+        "reviewed_at": entry.timestamp,
+        "audit_entry": _serialize_entry(entry),
+    }
+
+
+def human_review_action(state: GraphState) -> dict[str, Any]:
+    """Process the decision made in Streamlit after the review interrupt."""
+
+    return execute_high_risk_action(state)
 
 
 def build_graph():
@@ -258,23 +273,23 @@ def build_graph():
     builder = StateGraph(GraphState)
     builder.add_node("evaluate_customer", evaluate_customer)
     builder.add_node("execute_low_risk_action", execute_low_risk_action)
-    builder.add_node("execute_high_risk_action", execute_high_risk_action)
+    builder.add_node("human_review_action", human_review_action)
     builder.add_edge(START, "evaluate_customer")
     builder.add_conditional_edges(
         "evaluate_customer",
         route_action,
         {
             "execute_low_risk_action": "execute_low_risk_action",
-            "execute_high_risk_action": "execute_high_risk_action",
+            "execute_high_risk_action": "human_review_action",
         },
     )
     builder.add_edge("execute_low_risk_action", END)
-    builder.add_edge("execute_high_risk_action", END)
+    builder.add_edge("human_review_action", END)
 
     memory = MemorySaver()
     return builder.compile(
         checkpointer=memory,
-        interrupt_before=["execute_high_risk_action"],
+        interrupt_before=["human_review_action"],
     )
 
 

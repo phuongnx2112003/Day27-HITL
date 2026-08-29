@@ -40,7 +40,7 @@ pytest -q
 - `send_email` được tự động thực thi khi confidence `>= 0.85`.
 - Confidence `< 0.85` sẽ được escalation để human review.
 
-Graph sử dụng `MemorySaver()` và `interrupt_before=["execute_high_risk_action"]`. Streamlit lưu cùng `thread_id`, cập nhật state bằng `graph.update_state()` rồi resume bằng `graph.invoke(None, config)`.
+Graph sử dụng `MemorySaver()` và `interrupt_before=["human_review_action"]`. Node `human_review_action` chịu trách nhiệm tiếp nhận quyết định của người review, sau đó gọi phần thực thi `execute_high_risk_action`. Streamlit lưu cùng `thread_id`, cập nhật state bằng `graph.update_state()` rồi resume bằng `graph.invoke(None, config)`.
 
 Human có thể Approve, Reject hoặc Edit action. Mọi quyết định được append vào `audit_log.json` cùng customer, timestamp, agent, action, confidence, reviewer và decision. LLM request có timeout 30 giây, retry tối đa 2 lần và fallback cho provider không hỗ trợ `response_format`.
 

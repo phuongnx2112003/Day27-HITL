@@ -97,5 +97,5 @@ def test_high_risk_graph_interrupts_before_execution(audit_file, monkeypatch):
     }, config)
     snapshot = graph.get_state(config)
     assert snapshot.values["proposed_action"] == "increase_credit_limit"
-    assert snapshot.next == ("execute_high_risk_action",)
+    assert snapshot.next == ("human_review_action",)
     assert json.loads(audit_file.read_text(encoding="utf-8")) == []
