@@ -1,0 +1,27 @@
+[
+  {
+    "timestamp": "2026-08-29T04:48:55.112742+00:00",
+    "agent_id": "churn-risk-agent",
+    "action": "increase_credit_limit",
+    "confidence": 0.96,
+    "reviewer_id": "operator_01",
+    "decision": "approve"
+  },
+  {
+    "timestamp": "2026-08-29T04:53:17.686755+00:00",
+    "agent_id": "churn-risk-agent",
+    "action": "increase_credit_limit",
+    "confidence": 0.96,
+    "reviewer_id": "operator_01",
+    "decision": "reject"
+  },
+  {
+    "customer_id": "CUST002",
+    "timestamp": "2026-08-29T05:10:08.248230+00:00",
+    "agent_id": "churn-risk-agent",
+    "action": "increase_credit_limit",
+    "confidence": 0.92,
+    "reviewer_id": "operator_01",
+    "decision": "approve"
+  }
+]
